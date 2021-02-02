@@ -6,15 +6,12 @@ include(FetchContent)
 set(PROJECT_NAME "p2p_folders")
 project(${PROJECT_NAME})
 
-# USEFULL PATHS AND DEFINITIONS
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 set(SRC_PATH ${CMAKE_SOURCE_DIR}/src)
 
-# CPP 17
-set(CMAKE_CXX_STANDARD 17)
+# CPP 20
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
 
 #######################################################################
@@ -43,10 +40,32 @@ file(GLOB src_files
     "src/**.cpp"
 )
 
-# CREATE THE EXECUTABLE
+#######################################################################
+#                         EXECUTABLE                                  #
+#######################################################################
 add_executable(${PROJECT_NAME}
     ${src_files}
 )
+
+#######################################################################
+#                             C++ 20                                  #
+#######################################################################
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+# Make sure that visual studio uses multiple threads
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(${PROJECT_NAME} PUBLIC /MP /Zc:__cplusplus)
+endif()
+
+
+
+#######################################################################
+#                            INCLUDES                                 #
+#######################################################################
+
+target_include_directories(${PROJECT_NAME} PUBLIC Source
+    ${CMAKE_CURRENT_SOURCE_DIR}/externals/brynet-1.0.9/include
+)
+
 
 # LINK THE LIBARRIES
 target_link_libraries(${PROJECT_NAME}
@@ -58,3 +77,4 @@ target_link_libraries(${PROJECT_NAME}
   -lstdc++fs
   -lpthread
 )
+
